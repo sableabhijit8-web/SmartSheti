@@ -1,0 +1,6 @@
+{
+  "name": "KrushiAI - Smart Agriculture Decision Support System",
+  "description": "AI-powered smart agriculture decision support system for Indian farmers: crop recommendations, disease detection, market prices, price forecasts, irrigation guidance, and farm planning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
