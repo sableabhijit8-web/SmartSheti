@@ -33,7 +33,7 @@ import {
   ComposedChart
 } from 'recharts';
 import { useApp } from '../../context/AppContext';
-import { DEMO_WEATHER, DEMO_MARKET_PRICES } from '../../data/mockData';
+import { DEMO_WEATHER } from '../../data/mockData';
 import { CropName } from '../../types';
 import { PrototypeBanner } from '../layout/PrototypeBanner';
 
@@ -67,8 +67,6 @@ export const DashboardView: React.FC = () => {
         date: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
         historicalPrice: val,
         predictedPrice: i === 0 ? val : null,
-        lowerBound: i === 0 ? val : null,
-        upperBound: i === 0 ? val : null,
       });
     }
 
@@ -77,13 +75,10 @@ export const DashboardView: React.FC = () => {
       const d = new Date(today);
       d.setDate(d.getDate() + i);
       const predVal = Math.round(basePrice + (i * slope) + (Math.sin(i * 0.6) * 20));
-      const band = 35 + i * 8;
       data.push({
         date: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
         historicalPrice: null,
         predictedPrice: predVal,
-        lowerBound: predVal - band,
-        upperBound: predVal + band,
       });
     }
 
@@ -99,6 +94,8 @@ export const DashboardView: React.FC = () => {
     { crop: 'Wheat', price: 2450, diff: '+0.4%', up: true },
     { crop: 'Tomato', price: 2200, diff: '+4.2%', up: true },
   ];
+
+  const completedCount = Object.values(completedActions).filter(Boolean).length;
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-16 font-sans">
@@ -117,16 +114,16 @@ export const DashboardView: React.FC = () => {
 
         <div className="relative p-6 sm:p-8 md:p-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/80 backdrop-blur-xs text-emerald-200 text-xs font-semibold mb-3 border border-emerald-700/60">
-            <span>Decision Support System</span>
+            <span>{t('common.prototypeTag')}</span>
             <span aria-hidden="true">·</span>
             <span>{farmerProfile.district}, {farmerProfile.state}</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-2">
-            Good Morning, {farmerProfile.name} 👋
+            {t('dashboard.greeting', { name: farmerProfile.name })}
           </h1>
           <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed mb-6 font-normal">
-            Here's your farm intelligence for today. Real-time agronomic models, weather risk alerts, soil water balance, and APMC market forecasting tailored for your {farmerProfile.farmArea} Ha holding.
+            {t('dashboard.subtitle', { area: farmerProfile.farmArea })}
           </p>
 
           <div className="flex flex-wrap gap-3">
@@ -134,29 +131,27 @@ export const DashboardView: React.FC = () => {
               onClick={() => setActiveTab('crop-recommendation')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
             >
-              <span>Explore Crop Recommendation</span>
+              <span>{t('dashboard.exploreCropBtn')}</span>
               <ArrowUpRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveTab('disease-detection')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm backdrop-blur-xs border border-white/20 transition-all cursor-pointer"
             >
-              <span>Scan Leaf Health</span>
+              <span>{t('dashboard.scanLeafBtn')}</span>
             </button>
             <button
               onClick={() => setActiveTab('google-drive')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/90 text-emerald-200 font-semibold text-xs sm:text-sm backdrop-blur-xs border border-emerald-600/40 transition-all cursor-pointer"
             >
               <HardDrive className="w-4 h-4" />
-              <span>Drive Locker</span>
+              <span>{t('dashboard.driveLockerBtn')}</span>
             </button>
           </div>
         </div>
       </div>
 
-      <PrototypeBanner 
-        subtext="KrushiAI operates in Functional Prototype Mode for academic demonstration. All market valuations, yield estimates, and disease diagnoses represent mock data and simulated ML inference models. Agmarknet live feeds and real neural models connect in production."
-      />
+      <PrototypeBanner />
 
       {/* 2. TODAY'S FARM ACTION - CRITICAL ADVISORY STRIP */}
       <div className="p-6 rounded-3xl bg-white dark:bg-neutral-900 border-2 border-emerald-500/30 dark:border-emerald-500/20 shadow-sm space-y-4">
@@ -167,15 +162,15 @@ export const DashboardView: React.FC = () => {
             </div>
             <div>
               <h2 className="text-base font-extrabold text-neutral-900 dark:text-neutral-100">
-                Today's Farm Action
+                {t('dashboard.todayActionsTitle')}
               </h2>
               <p className="text-xs text-neutral-500">
-                Prioritized daily tasks generated by KrushiAI agronomic rules engine
+                {t('dashboard.todayActionsSubtitle')}
               </p>
             </div>
           </div>
           <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full font-semibold self-start sm:self-auto">
-            {Object.values(completedActions).filter(Boolean).length} of 4 Completed
+            {t('dashboard.completedCount', { completed: completedCount, total: 4 })}
           </span>
         </div>
 
@@ -197,14 +192,14 @@ export const DashboardView: React.FC = () => {
             <div className="space-y-1 flex-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-neutral-900 dark:text-neutral-100">
-                  Hold Borewell Irrigation for 48h
+                  {t('dashboard.holdIrrigationTitle')}
                 </span>
                 <span className="text-[10px] font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-950/50 px-2 py-0.5 rounded">
-                  Water Balance
+                  {t('dashboard.holdIrrigationBadge')}
                 </span>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Soil moisture is adequate at 42% following recent 14.2 mm rain. Hold borewell pumping to avoid root waterlogging and save electricity.
+                {t('dashboard.holdIrrigationDesc', { moisture: 42, rain: 14.2 })}
               </p>
             </div>
           </div>
@@ -226,14 +221,14 @@ export const DashboardView: React.FC = () => {
             <div className="space-y-1 flex-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-neutral-900 dark:text-neutral-100">
-                  Scout Lower Canopy for Early Blight
+                  {t('dashboard.scoutCanopyTitle')}
                 </span>
                 <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/50 px-2 py-0.5 rounded">
-                  Foliar Alert
+                  {t('dashboard.scoutCanopyBadge')}
                 </span>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Relative humidity at 68% creates favorable conditions for fungal leaf spots. Inspect bottom leaves before 11:00 AM.
+                {t('dashboard.scoutCanopyDesc', { humidity: DEMO_WEATHER.humidity })}
               </p>
             </div>
           </div>
@@ -255,14 +250,14 @@ export const DashboardView: React.FC = () => {
             <div className="space-y-1 flex-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-neutral-900 dark:text-neutral-100">
-                  Monitor Pune APMC Soybean Window
+                  {t('dashboard.monitorPriceTitle')}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/50 px-2 py-0.5 rounded">
-                  Price Alert
+                  {t('dashboard.monitorPriceBadge')}
                 </span>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Today's rate is ₹4,850/q (+1.5%). 15-day forecast projects favorable demand peak next week.
+                {t('dashboard.monitorPriceDesc', { price: '4,850', trend: '+1.5%' })}
               </p>
             </div>
           </div>
@@ -284,14 +279,14 @@ export const DashboardView: React.FC = () => {
             <div className="space-y-1 flex-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-neutral-900 dark:text-neutral-100">
-                  Schedule Inter-row Weeding (Day 25)
+                  {t('dashboard.scheduleWeedingTitle')}
                 </span>
                 <span className="text-[10px] font-bold text-neutral-600 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 rounded">
-                  Operations
+                  {t('dashboard.scheduleWeedingBadge')}
                 </span>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Upcoming activity in 3 days: 8 labour mandays or bullock-drawn hoeing recommended per hectare.
+                {t('dashboard.scheduleWeedingDesc')}
               </p>
             </div>
           </div>
@@ -306,9 +301,9 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center justify-between text-xs text-neutral-500 mb-2">
               <span className="font-semibold flex items-center gap-1.5">
                 <CloudSun className="w-4 h-4 text-amber-500" />
-                <span>Today's Weather</span>
+                <span>{t('dashboard.weatherTitle')}</span>
               </span>
-              <span className="text-[10px] font-mono text-emerald-600">Demo</span>
+              <span className="text-[10px] font-mono text-emerald-600">{t('common.demoBadge')}</span>
             </div>
             <div className="flex items-baseline justify-between mb-1">
               <span className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-100 font-mono tabular-nums">
@@ -326,11 +321,11 @@ export const DashboardView: React.FC = () => {
 
           <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 grid grid-cols-2 gap-2 text-[11px] text-neutral-600 dark:text-neutral-400">
             <div>
-              <span className="text-neutral-400 block">Rain Probability</span>
-              <span className="font-bold text-neutral-800 dark:text-neutral-200">25% (Light)</span>
+              <span className="text-neutral-400 block">{t('dashboard.rainProbability')}</span>
+              <span className="font-bold text-neutral-800 dark:text-neutral-200">25%</span>
             </div>
             <div>
-              <span className="text-neutral-400 block">Humidity</span>
+              <span className="text-neutral-400 block">{t('dashboard.humidity')}</span>
               <span className="font-bold text-neutral-800 dark:text-neutral-200">{DEMO_WEATHER.humidity}%</span>
             </div>
           </div>
@@ -342,20 +337,20 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center justify-between text-xs text-neutral-500 mb-2">
               <span className="font-semibold flex items-center gap-1.5">
                 <Sprout className="w-4 h-4 text-emerald-600" />
-                <span>Soil Condition</span>
+                <span>{t('dashboard.soilConditionTitle')}</span>
               </span>
-              <span className="text-[10px] font-mono text-emerald-600">Optimal</span>
+              <span className="text-[10px] font-mono text-emerald-600">{t('common.optimal')}</span>
             </div>
             <p className="text-2xl font-extrabold text-neutral-900 dark:text-neutral-100 truncate">
               {farmerProfile.soilType}
             </p>
             <span className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold block mt-0.5">
-              Moisture: 42% · pH 7.2
+              {t('dashboard.soilStatusOptimal', { moisture: 42, ph: 7.2 })}
             </span>
           </div>
 
           <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-500">
-            <span>Soil Temp: <strong>26.2°C</strong> · High Vertisol retention</span>
+            <span>{t('dashboard.soilTempDesc', { temp: 26.2 })}</span>
           </div>
         </div>
 
@@ -368,25 +363,25 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center justify-between text-xs text-neutral-500 mb-2">
               <span className="font-semibold flex items-center gap-1.5">
                 <Droplets className="w-4 h-4 text-sky-600" />
-                <span>Irrigation Guidance</span>
+                <span>{t('dashboard.irrigationTitle')}</span>
               </span>
               <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-emerald-600" />
             </div>
             <p className="text-2xl font-extrabold text-neutral-900 dark:text-neutral-100">
-              Hold (48-72h)
+              {t('dashboard.irrigationHold')}
             </p>
             <span className="text-xs text-sky-700 dark:text-sky-400 font-semibold block mt-0.5">
-              14.2 mm rain received
+              {t('dashboard.rainReceived', { rain: 14.2 })}
             </span>
           </div>
 
           <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-500 flex justify-between">
-            <span>Today Need: <strong>0 mm</strong></span>
-            <span className="text-emerald-600 font-semibold">Simulate Meter →</span>
+            <span>{t('dashboard.todayNeedZero')}</span>
+            <span className="text-emerald-600 font-semibold">{t('dashboard.simulateMeterLink')}</span>
           </div>
         </div>
 
-        {/* Crop Health & Upcoming Activities */}
+        {/* Crop Health Status */}
         <div 
           onClick={() => setActiveTab('disease-detection')}
           className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs hover:border-emerald-500 cursor-pointer transition-all flex flex-col justify-between group"
@@ -395,21 +390,21 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center justify-between text-xs text-neutral-500 mb-2">
               <span className="font-semibold flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Crop Health Status</span>
+                <span>{t('dashboard.cropHealthTitle')}</span>
               </span>
               <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-emerald-600" />
             </div>
             <p className="text-2xl font-extrabold text-neutral-900 dark:text-neutral-100">
-              Watch Foliage
+              {t('dashboard.watchFoliage')}
             </p>
             <span className="text-xs text-amber-700 dark:text-amber-400 font-semibold block mt-0.5">
-              High humidity fungal risk
+              {t('dashboard.fungalRisk')}
             </span>
           </div>
 
           <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-500 flex justify-between">
-            <span>Next Task: <strong>Weeding (3d)</strong></span>
-            <span className="text-emerald-600 font-semibold">Scan Leaf →</span>
+            <span>{t('dashboard.nextTaskPrefix')}</span>
+            <span className="text-emerald-600 font-semibold">{t('dashboard.scanLeafLink')}</span>
           </div>
         </div>
       </div>
@@ -420,21 +415,21 @@ export const DashboardView: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                Today's APMC Mandi Rates
+                {t('dashboard.apmcRatesTitle')}
               </h3>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 uppercase tracking-wider">
-                Demo Quotes
+                {t('common.demoBadge')}
               </span>
             </div>
             <p className="text-xs text-neutral-500 mt-0.5">
-              Modal trading prices across key Maharashtra markets. Click a crop to view its AI price trend below.
+              {t('dashboard.apmcRatesSubtitle')}
             </p>
           </div>
           <button
             onClick={() => setActiveTab('market-prices')}
             className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 self-start sm:self-auto cursor-pointer"
           >
-            <span>Full Mandi Board (10 Hubs)</span>
+            <span>{t('dashboard.fullBoardLink')}</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -451,7 +446,9 @@ export const DashboardView: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-between text-xs text-neutral-500 mb-1.5">
-                <span className="font-bold text-neutral-900 dark:text-neutral-100">{item.crop}</span>
+                <span className="font-bold text-neutral-900 dark:text-neutral-100">
+                  {t(`crops.${item.crop}`)}
+                </span>
                 <span className={`inline-flex items-center text-[11px] font-bold ${item.up ? 'text-emerald-600' : 'text-red-500'}`}>
                   {item.diff}
                 </span>
@@ -459,7 +456,7 @@ export const DashboardView: React.FC = () => {
               <p className="text-xl font-bold font-mono text-neutral-900 dark:text-neutral-100 tabular-nums">
                 ₹{item.price.toLocaleString('en-IN')}
               </p>
-              <span className="text-[10px] text-neutral-400">per Quintal</span>
+              <span className="text-[10px] text-neutral-400">{t('dashboard.perQuintal')}</span>
             </div>
           ))}
         </div>
@@ -474,14 +471,14 @@ export const DashboardView: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                    Price Trend & Forecast
+                    {t('dashboard.priceTrendTitle')}
                   </h3>
                   <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded">
-                    {selectedCrop}
+                    {t(`crops.${selectedCrop}`)}
                   </span>
                 </div>
                 <p className="text-xs text-neutral-500 mt-0.5">
-                  Solid green: Historical APMC trading · Dashed line: Simulated Forecast
+                  {t('dashboard.priceTrendSubtitle')}
                 </p>
               </div>
 
@@ -497,7 +494,7 @@ export const DashboardView: React.FC = () => {
                         : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900'
                     }`}
                   >
-                    {r} Days
+                    {t('dashboard.daysHorizon', { days: r })}
                   </button>
                 ))}
               </div>
@@ -531,7 +528,7 @@ export const DashboardView: React.FC = () => {
                     }}
                     formatter={(value: any, name: any) => [
                       `₹${Number(value).toLocaleString('en-IN')}`,
-                      name === 'historicalPrice' ? 'Historical APMC' : 'Demo Forecast'
+                      name === 'historicalPrice' ? t('dashboard.historicalLine') : t('dashboard.forecastLine')
                     ]}
                   />
                   <Line 
@@ -542,6 +539,7 @@ export const DashboardView: React.FC = () => {
                     dot={{ r: 3, fill: '#047857' }} 
                     activeDot={{ r: 5 }}
                     isAnimationActive={true}
+                    name={t('dashboard.historicalLine')}
                   />
                   <Line 
                     type="monotone" 
@@ -551,6 +549,7 @@ export const DashboardView: React.FC = () => {
                     strokeDasharray="4 4" 
                     dot={{ r: 3, fill: '#10b981' }}
                     isAnimationActive={true}
+                    name={t('dashboard.forecastLine')}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -559,17 +558,17 @@ export const DashboardView: React.FC = () => {
 
           <div className="mt-4 pt-3 border-t border-neutral-100 dark:border-neutral-800 flex flex-wrap items-center justify-between text-xs text-neutral-500 gap-2">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-neutral-700 dark:text-neutral-300">Trend Signal:</span>
+              <span className="font-semibold text-neutral-700 dark:text-neutral-300">{t('dashboard.trendSignal')}</span>
               <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
                 <TrendingUp className="w-3.5 h-3.5" />
-                Moderately Bullish (+1.5% projected momentum)
+                {t('dashboard.bullishSignal')}
               </span>
             </div>
             <button
               onClick={() => setActiveTab('price-prediction')}
-              className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline"
+              className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline cursor-pointer"
             >
-              Analyze Forecast Horizon →
+              {t('dashboard.analyzeHorizonLink')}
             </button>
           </div>
         </div>
@@ -581,11 +580,11 @@ export const DashboardView: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                 <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                  Upcoming Activities
+                  {t('dashboard.upcomingTitle')}
                 </h3>
               </div>
               <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
-                Soybean Kharif
+                {t('dashboard.upcomingSubtitle')}
               </span>
             </div>
 
@@ -593,39 +592,39 @@ export const DashboardView: React.FC = () => {
               <div className="p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-100 dark:border-neutral-700/60">
                 <div className="flex items-center justify-between text-neutral-400 mb-1">
                   <span>Day 25 Post-Sowing</span>
-                  <span className="text-emerald-600 font-bold">In 3 Days</span>
+                  <span className="text-emerald-600 font-bold">{t('dashboard.inDays', { days: 3 })}</span>
                 </div>
                 <h4 className="font-bold text-neutral-800 dark:text-neutral-200">
-                  First Inter-Row Cultivation & Weeding
+                  {t('dashboard.day25Title')}
                 </h4>
                 <p className="text-[11px] text-neutral-500 mt-0.5">
-                  Operate bullock-drawn blade hoe to break soil crust and suppress broadleaf competition.
+                  {t('dashboard.day25Desc')}
                 </p>
               </div>
 
               <div className="p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-100 dark:border-neutral-700/60">
                 <div className="flex items-center justify-between text-neutral-400 mb-1">
                   <span>Day 35 Post-Sowing</span>
-                  <span>In 13 Days</span>
+                  <span>{t('dashboard.inDays', { days: 13 })}</span>
                 </div>
                 <h4 className="font-bold text-neutral-800 dark:text-neutral-200">
-                  Foliar Micronutrient & Boron Spray
+                  {t('dashboard.day35Title')}
                 </h4>
                 <p className="text-[11px] text-neutral-500 mt-0.5">
-                  Prepare 0.5% zinc sulphate or water-soluble boron prior to flower bud initiation.
+                  {t('dashboard.day35Desc')}
                 </p>
               </div>
 
               <div className="p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-100 dark:border-neutral-700/60">
                 <div className="flex items-center justify-between text-neutral-400 mb-1">
                   <span>Day 50 Post-Sowing</span>
-                  <span>In 28 Days</span>
+                  <span>{t('dashboard.inDays', { days: 28 })}</span>
                 </div>
                 <h4 className="font-bold text-neutral-800 dark:text-neutral-200">
-                  Critical Flowering Moisture Check
+                  {t('dashboard.day50Title')}
                 </h4>
                 <p className="text-[11px] text-neutral-500 mt-0.5">
-                  Ensure soil does not face moisture stress during peak blossom to prevent pod drop.
+                  {t('dashboard.day50Desc')}
                 </p>
               </div>
             </div>
@@ -636,7 +635,7 @@ export const DashboardView: React.FC = () => {
               onClick={() => setActiveTab('farm-calendar')}
               className="w-full py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-semibold text-xs hover:bg-emerald-100 text-center transition-colors cursor-pointer"
             >
-              View Full 95-Day Crop Calendar
+              {t('dashboard.viewCalendarBtn')}
             </button>
           </div>
         </div>

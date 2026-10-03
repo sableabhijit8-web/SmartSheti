@@ -171,7 +171,7 @@ export const FarmProfileView: React.FC = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleFieldChange('name', e.target.value)}
-                  placeholder="e.g. Ramesh Patil"
+                  placeholder="e.g. Abhijit Sable"
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                 />
               </div>

@@ -38,7 +38,7 @@ const APMC_MARKETS = [
 ];
 
 export const PricePredictionView: React.FC = () => {
-  const { showToast } = useApp();
+  const { showToast, t } = useApp();
 
   const [selectedCrop, setSelectedCrop] = useState<CropName>('Soybean');
   const [selectedMarket, setSelectedMarket] = useState<string>('Pune APMC');
@@ -52,7 +52,7 @@ export const PricePredictionView: React.FC = () => {
       const res = await getPricePrediction({ crop, market, horizonDays: horizon });
       setPredictionData(res);
     } catch {
-      showToast('Error forecasting price trend', 'warning');
+      showToast(t('common.error'), 'warning');
     } finally {
       setIsLoading(false);
     }
@@ -63,52 +63,50 @@ export const PricePredictionView: React.FC = () => {
   }, [selectedCrop, selectedMarket, horizonDays]);
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-16">
+    <div className="space-y-6 max-w-5xl mx-auto pb-16 font-sans">
       {/* Title */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <span className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+          <span className="p-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
             <TrendingUp className="w-5 h-5" />
           </span>
           <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-neutral-100 tracking-tight">
-            AI Crop Price Prediction
+            {t('pricePrediction.title')}
           </h2>
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Synthesize historical price volatility and seasonal harvest cycles to anticipate mandi price trajectories.
+          {t('pricePrediction.subtitle')}
         </p>
       </div>
 
-      <PrototypeBanner 
-        subtext="Prototype Forecast — real LSTM / XGBoost time-series neural network and daily Agmarknet feeds will be connected in subsequent phases. Do not execute binding sales commitments purely on demo projections."
-      />
+      <PrototypeBanner />
 
       {/* Input Selection Bar */}
-      <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-              Select Crop / Commodity
+              {t('pricePrediction.selectCrop')}
             </label>
             <select
               value={selectedCrop}
               onChange={(e) => setSelectedCrop(e.target.value as CropName)}
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
             >
               {ALL_CROPS.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>{t(`crops.${c}`)}</option>
               ))}
             </select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-              APMC Mandi Hub
+              {t('pricePrediction.selectMarket')}
             </label>
             <select
               value={selectedMarket}
               onChange={(e) => setSelectedMarket(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
             >
               {APMC_MARKETS.map((m) => (
                 <option key={m} value={m}>{m}</option>
@@ -118,212 +116,174 @@ export const PricePredictionView: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-              Forecast Horizon
+              {t('pricePrediction.horizonLabel')}
             </label>
-            <div className="grid grid-cols-3 gap-1.5 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-              {([7, 15, 30] as const).map((h) => (
-                <button
-                  key={h}
-                  type="button"
-                  onClick={() => setHorizonDays(h)}
-                  className={`py-1.5 text-xs font-medium rounded-md transition-colors ${
-                    horizonDays === h
-                      ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-xs font-bold'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900'
-                  }`}
-                >
-                  {h} Days
-                </button>
-              ))}
+            <div className="flex items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setHorizonDays(7)}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                  horizonDays === 7
+                    ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900'
+                }`}
+              >
+                {t('dashboard.daysHorizon', { days: 7 })}
+              </button>
+              <button
+                type="button"
+                onClick={() => setHorizonDays(15)}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                  horizonDays === 15
+                    ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900'
+                }`}
+              >
+                {t('dashboard.daysHorizon', { days: 15 })}
+              </button>
+              <button
+                type="button"
+                onClick={() => setHorizonDays(30)}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                  horizonDays === 30
+                    ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900'
+                }`}
+              >
+                {t('dashboard.daysHorizon', { days: 30 })}
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Prediction Display */}
+      {/* Chart Section */}
       {predictionData && (
-        <div className="space-y-6">
-          {/* Key Horizon Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800">
-              <span className="text-[11px] font-medium text-neutral-500 block mb-1">
-                Current Demo Price
-              </span>
-              <p className="text-xl sm:text-2xl font-bold font-mono text-neutral-900 dark:text-neutral-100 tabular-nums">
-                ₹{predictionData.currentPrice.toLocaleString('en-IN')}
+        <div className="p-6 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+                  {t('pricePrediction.chartTitle')} ({t(`crops.${selectedCrop}`)})
+                </h3>
+                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
+                  {selectedMarket}
+                </span>
+              </div>
+              <p className="text-xs text-neutral-500 mt-0.5">
+                {t('dashboard.priceTrendSubtitle')}
               </p>
-              <span className="text-[10px] text-neutral-400">per Quintal</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800">
-              <span className="text-[11px] font-medium text-neutral-500 block mb-1">
-                7-Day Forecast
+            <div className="flex items-center gap-3 text-xs">
+              <span className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                <span className="w-3 h-0.5 bg-emerald-700 inline-block"></span>
+                <span>{t('dashboard.historicalLine')}</span>
               </span>
-              <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-800 dark:text-emerald-300 tabular-nums">
-                ₹{predictionData.forecastSummary.day7.toLocaleString('en-IN')}
-              </p>
-              <span className="text-[10px] text-neutral-400">Short-term estimate</span>
-            </div>
-
-            <div className="p-4 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800">
-              <span className="text-[11px] font-medium text-neutral-500 block mb-1">
-                15-Day Forecast
+              <span className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                <span className="w-3 h-0.5 bg-emerald-500 border-b border-dashed border-emerald-500 inline-block"></span>
+                <span>{t('dashboard.forecastLine')}</span>
               </span>
-              <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-800 dark:text-emerald-300 tabular-nums">
-                ₹{predictionData.forecastSummary.day15.toLocaleString('en-IN')}
-              </p>
-              <span className="text-[10px] text-neutral-400">Mid-term estimate</span>
-            </div>
-
-            <div className="p-4 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800">
-              <span className="text-[11px] font-medium text-neutral-500 block mb-1">
-                30-Day Forecast
-              </span>
-              <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-800 dark:text-emerald-300 tabular-nums">
-                ₹{predictionData.forecastSummary.day30.toLocaleString('en-IN')}
-              </p>
-              <span className="text-[10px] text-neutral-400">Monthly projection</span>
             </div>
           </div>
 
-          {/* Interactive Chart */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-              <div>
-                <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                  {selectedCrop} — {selectedMarket} Forecast Band ({horizonDays} Days)
-                </h3>
-                <p className="text-xs text-neutral-500">
-                  Solid Line: Historical 14 Days · Dashed Line: Projected Mean · Shaded: Upper & Lower Uncertainty Bounds
-                </p>
-              </div>
+          {/* Recharts */}
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={predictionData.points} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} opacity={0.6} />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fontSize: 11, fill: '#6b7280' }} 
+                  axisLine={{ stroke: '#e5e7eb' }}
+                  tickLine={false}
+                />
+                <YAxis 
+                  domain={['auto', 'auto']}
+                  tick={{ fontSize: 11, fill: '#6b7280' }} 
+                  axisLine={{ stroke: '#e5e7eb' }}
+                  tickLine={false}
+                  tickFormatter={(val) => `₹${val}`}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                    borderRadius: '12px', 
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', 
+                    border: '1px solid #e5e7eb',
+                    fontSize: '12px' 
+                  }}
+                  formatter={(value: any, name: any) => [
+                    `₹${Number(value).toLocaleString('en-IN')}`,
+                    name === 'historicalPrice' ? t('dashboard.historicalLine') : t('dashboard.forecastLine')
+                  ]}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="upperBound" 
+                  stroke="none" 
+                  fill="#10b981" 
+                  fillOpacity={0.12} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="historicalPrice" 
+                  stroke="#047857" 
+                  strokeWidth={2.5} 
+                  dot={{ r: 3, fill: '#047857' }} 
+                  activeDot={{ r: 5 }}
+                  name="historicalPrice"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="predictedPrice" 
+                  stroke="#10b981" 
+                  strokeWidth={2.5} 
+                  strokeDasharray="4 4" 
+                  dot={{ r: 3, fill: '#10b981' }}
+                  name="predictedPrice"
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
 
-              {/* Trend Badge */}
-              <div className="flex items-center gap-2 self-start sm:self-auto">
-                <span className="text-xs text-neutral-500">Trend:</span>
-                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold ${
-                  predictionData.trend === 'Increasing'
-                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                    : predictionData.trend === 'Decreasing'
-                    ? 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
-                    : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
+          {/* Metrics Strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+            <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200/70 dark:border-neutral-700/60">
+              <span className="text-xs text-neutral-500 block mb-1">
+                {t('pricePrediction.currentModal', { price: predictionData.currentModalPrice.toLocaleString('en-IN') })}
+              </span>
+              <p className="text-xl font-bold font-mono text-neutral-900 dark:text-neutral-100">
+                ₹{predictionData.currentModalPrice.toLocaleString('en-IN')}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200/70 dark:border-neutral-700/60">
+              <span className="text-xs text-neutral-500 block mb-1">
+                {t('pricePrediction.predictedModal', { days: horizonDays, price: predictionData.predictedPriceAtHorizon.toLocaleString('en-IN') })}
+              </span>
+              <p className="text-xl font-bold font-mono text-neutral-900 dark:text-neutral-100">
+                ₹{predictionData.predictedPriceAtHorizon.toLocaleString('en-IN')}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200/70 dark:border-neutral-700/60">
+              <span className="text-xs text-neutral-500 block mb-1">
+                {t('pricePrediction.projectedShift', { shift: predictionData.projectedPercentageShift })}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {predictionData.projectedPercentageShift >= 0 ? (
+                  <TrendingUp className="w-5 h-5 text-emerald-600" />
+                ) : (
+                  <TrendingDown className="w-5 h-5 text-red-600" />
+                )}
+                <span className={`text-xl font-bold font-mono ${
+                  predictionData.projectedPercentageShift >= 0 ? 'text-emerald-600' : 'text-red-600'
                 }`}>
-                  {predictionData.trend === 'Increasing' ? (
-                    <TrendingUp className="w-3.5 h-3.5" />
-                  ) : predictionData.trend === 'Decreasing' ? (
-                    <TrendingDown className="w-3.5 h-3.5" />
-                  ) : (
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  )}
-                  <span>{predictionData.trend} ({predictionData.trendPercent > 0 ? `+${predictionData.trendPercent}%` : `${predictionData.trendPercent}%`})</span>
+                  {predictionData.projectedPercentageShift > 0 ? `+${predictionData.projectedPercentageShift}%` : `${predictionData.projectedPercentageShift}%`}
                 </span>
               </div>
             </div>
-
-            <div className="h-72 sm:h-80 w-full pt-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={predictionData.forecastPoints} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} opacity={0.6} />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 11, fill: '#6b7280' }} 
-                    axisLine={{ stroke: '#e5e7eb' }}
-                    tickLine={false}
-                  />
-                  <YAxis 
-                    domain={['auto', 'auto']}
-                    tick={{ fontSize: 11, fill: '#6b7280' }} 
-                    axisLine={{ stroke: '#e5e7eb' }}
-                    tickLine={false}
-                    tickFormatter={(val) => `₹${val}`}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                      borderRadius: '8px', 
-                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', 
-                      border: '1px solid #e5e7eb',
-                      fontSize: '12px' 
-                    }}
-                    formatter={(value: any, name: any) => [
-                      `₹${Number(value).toLocaleString('en-IN')}`,
-                      name === 'historicalPrice' 
-                        ? 'Historical Actual' 
-                        : name === 'predictedPrice' 
-                        ? 'Projected Modal' 
-                        : name === 'upperBound'
-                        ? 'Upper Uncertainty Bound'
-                        : 'Lower Uncertainty Bound'
-                    ]}
-                  />
-                  
-                  {/* Historical Solid Line */}
-                  <Line 
-                    type="monotone" 
-                    dataKey="historicalPrice" 
-                    stroke="#047857" 
-                    strokeWidth={2.5} 
-                    dot={{ r: 3, fill: '#047857' }}
-                  />
-
-                  {/* Predicted Mean Line */}
-                  <Line 
-                    type="monotone" 
-                    dataKey="predictedPrice" 
-                    stroke="#10b981" 
-                    strokeWidth={2.5} 
-                    strokeDasharray="5 5" 
-                    dot={{ r: 3, fill: '#10b981' }}
-                  />
-
-                  {/* Upper Bound */}
-                  <Line 
-                    type="monotone" 
-                    dataKey="upperBound" 
-                    stroke="#93c5fd" 
-                    strokeWidth={1} 
-                    strokeDasharray="2 2" 
-                    dot={false}
-                  />
-
-                  {/* Lower Bound */}
-                  <Line 
-                    type="monotone" 
-                    dataKey="lowerBound" 
-                    stroke="#93c5fd" 
-                    strokeWidth={1} 
-                    strokeDasharray="2 2" 
-                    dot={false}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Prediction Range Summary */}
-            <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-              <div>
-                <span className="text-neutral-500">Estimated Horizon Realization Range: </span>
-                <strong className="font-bold text-neutral-900 dark:text-neutral-100 font-mono tabular-nums">
-                  ₹{predictionData.minRange.toLocaleString('en-IN')} – ₹{predictionData.maxRange.toLocaleString('en-IN')} / Quintal
-                </strong>
-              </div>
-              <span className="text-[11px] text-neutral-400">
-                Cone of uncertainty broadens over longer horizons
-              </span>
-            </div>
-          </div>
-
-          {/* Model Specification Card */}
-          <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200/60 dark:border-neutral-700/60 text-xs">
-            <div className="flex items-center gap-2 text-neutral-800 dark:text-neutral-200 font-semibold mb-1">
-              <Cpu className="w-4 h-4 text-emerald-600" />
-              <span>Machine Learning Model Architecture (Future Implementation)</span>
-            </div>
-            <p className="text-[11px] text-neutral-500 leading-relaxed">
-              Endpoint: <code>POST /api/price-prediction</code>
-              <br />
-              Model candidates: Bidirectional LSTM / Gated Recurrent Units (GRU) stacked with XGBoost regressor, utilizing 10-year Agmarknet historical arrival volumes, rainfall indices, and festival demand seasonality.
-            </p>
           </div>
         </div>
       )}

@@ -4,7 +4,6 @@ import {
   Leaf, 
   Bug, 
   Store, 
-  MoreHorizontal, 
   X, 
   TrendingUp, 
   BarChart3, 
@@ -35,11 +34,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  const primaryTabs: { id: ActiveTab; label: string; icon: React.ElementType }[] = [
-    { id: 'dashboard', label: 'Home', icon: Sprout },
-    { id: 'crop-recommendation', label: 'Crops', icon: Leaf },
-    { id: 'disease-detection', label: 'Disease', icon: Bug },
-    { id: 'market-prices', label: 'Mandi', icon: Store },
+  const primaryTabs: { id: ActiveTab; labelKey: string; icon: React.ElementType }[] = [
+    { id: 'dashboard', labelKey: 'nav.dashboard', icon: Sprout },
+    { id: 'crop-recommendation', labelKey: 'nav.cropRecommendation', icon: Leaf },
+    { id: 'disease-detection', labelKey: 'nav.diseaseDetection', icon: Bug },
+    { id: 'market-prices', labelKey: 'nav.marketPrices', icon: Store },
   ];
 
   const drawerTabs: { id: ActiveTab; labelKey: string; icon: React.ElementType }[] = [
@@ -85,6 +84,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
               <button 
                 onClick={onClose}
                 className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                aria-label={t('common.close')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -121,7 +121,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
               >
                 <span className="flex items-center gap-2">
                   <Bell className="w-4 h-4 text-neutral-500" />
-                  <span>Notifications</span>
+                  <span>{t('nav.notifications')}</span>
                 </span>
                 {unreadCount > 0 && (
                   <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-white">
@@ -151,12 +151,12 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
                 }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'}`} />
-                <span className="text-[10px] mt-0.5">{tab.label}</span>
+                <span className="text-[10px] mt-0.5 truncate max-w-[70px]">{t(tab.labelKey)}</span>
               </button>
             );
           })}
 
-          {/* More button */}
+          {/* More/Overview button */}
           <button
             onClick={() => handleSelectTab(activeTab === 'landing' ? 'dashboard' : 'landing')}
             className={`flex flex-col items-center justify-center flex-1 h-full py-1 ${
@@ -166,7 +166,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
             }`}
           >
             <Sparkles className="w-5 h-5" />
-            <span className="text-[10px] mt-0.5">Overview</span>
+            <span className="text-[10px] mt-0.5 truncate max-w-[70px]">{t('nav.landing')}</span>
           </button>
         </div>
       </nav>

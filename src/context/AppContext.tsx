@@ -4,6 +4,7 @@ import { DEFAULT_FARMER_PROFILE, DEMO_NOTIFICATIONS } from '../data/mockData';
 
 import { User } from 'firebase/auth';
 import { initAuth, googleSignIn, logoutGoogle } from '../services/googleDriveService';
+import { TRANSLATIONS, SupportedLanguage, SUPPORTED_LANGUAGES, getTranslation } from '../locales';
 
 interface Toast {
   id: string;
@@ -29,7 +30,7 @@ interface AppContextType {
   showToast: (message: string, type?: 'success' | 'info' | 'warning') => void;
   isNotificationsOpen: boolean;
   setIsNotificationsOpen: (open: boolean) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
   // Google Drive
   driveUser: User | null;
   isDriveConnected: boolean;
@@ -38,8 +39,6 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-import { TRANSLATIONS, SupportedLanguage, SUPPORTED_LANGUAGES } from '../locales';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
@@ -53,7 +52,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const saved = localStorage.getItem('krushi_profile');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed.name === 'Ramesh Patil') {
+          parsed.name = 'Abhijit Sable';
+          localStorage.setItem('krushi_profile', JSON.stringify(parsed));
+        }
+        return parsed;
       } catch {
         return DEFAULT_FARMER_PROFILE;
       }
@@ -120,8 +124,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('Google Drive disconnected', 'info');
   };
 
+  // Sync Language and Direction (RTL for Urdu)
   useEffect(() => {
     localStorage.setItem('krushi_lang', language);
+    const meta = SUPPORTED_LANGUAGES.find((l) => l.code === language);
+    const direction = meta?.dir || 'ltr';
+    document.documentElement.setAttribute('dir', direction);
+    document.documentElement.setAttribute('lang', language);
   }, [language]);
 
   useEffect(() => {
@@ -185,8 +194,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const t = (key: string): string => {
-    return (TRANSLATIONS[language] as any)?.[key] || (TRANSLATIONS.en as any)?.[key] || key;
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    return getTranslation(language, key, params);
   };
 
   return (

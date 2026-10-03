@@ -54,7 +54,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
         <button
           onClick={onOpenMobileMenu}
           className="lg:hidden p-2 rounded-xl text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none cursor-pointer"
-          aria-label="Open navigation menu"
+          aria-label={t('nav.home')}
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -86,12 +86,12 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
           {activeTab === 'landing' ? (
             <>
               <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>Enter Farmer Dashboard</span>
+              <span>{t('nav.enterDashboard')}</span>
             </>
           ) : (
             <>
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Product Story & Overview</span>
+              <span>{t('nav.productTour')}</span>
             </>
           )}
         </button>
@@ -105,7 +105,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
             onClick={() => setLangMenuOpen(!langMenuOpen)}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 transition-colors cursor-pointer"
             aria-expanded={langMenuOpen}
-            aria-label="Select language"
+            aria-label={t('settings.languageSection')}
           >
             <Languages className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
             <span className="hidden sm:inline">{currentLangMeta.nativeName}</span>
@@ -116,7 +116,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
           {langMenuOpen && (
             <div className="absolute right-0 mt-1.5 w-60 max-h-80 overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100">
               <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 border-b border-neutral-100 dark:border-neutral-800">
-                13 Indian Languages
+                {t('landing.indianLanguages')} (13)
               </div>
               {SUPPORTED_LANGUAGES.map((opt) => (
                 <button
@@ -150,8 +150,8 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
               ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
               : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
           }`}
-          title="Google Drive Farm Records"
-          aria-label="Google Drive Farm Records"
+          title={t('nav.googleDrive')}
+          aria-label={t('nav.googleDrive')}
         >
           <HardDrive className="w-4 h-4" />
         </button>
@@ -160,8 +160,8 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
         <button
           onClick={toggleTheme}
           className="p-2 rounded-xl text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
-          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-          aria-label="Toggle color theme"
+          title={theme === 'light' ? t('settings.darkMode') : t('settings.lightMode')}
+          aria-label={theme === 'light' ? t('settings.darkMode') : t('settings.lightMode')}
         >
           {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
         </button>
@@ -170,7 +170,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenMobileMenu }) => {
         <button
           onClick={() => setIsNotificationsOpen(true)}
           className="relative p-2 rounded-xl text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
-          aria-label="View notifications"
+          aria-label={t('nav.notifications')}
         >
           <Bell className="w-4 h-4" />
           {unreadCount > 0 && (

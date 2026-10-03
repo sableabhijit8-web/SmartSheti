@@ -25,10 +25,14 @@ interface NavItem {
   id: ActiveTab;
   labelKey: string;
   icon: React.ElementType;
-  badge?: string;
 }
 
-const NAV_GROUPS: { groupTitle?: string; items: NavItem[] }[] = [
+interface NavGroup {
+  groupKey?: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
   {
     items: [
       { id: 'landing', labelKey: 'nav.landing', icon: Sparkles },
@@ -36,7 +40,7 @@ const NAV_GROUPS: { groupTitle?: string; items: NavItem[] }[] = [
     ],
   },
   {
-    groupTitle: 'Agronomy & Protection',
+    groupKey: 'groups.agronomyProtection',
     items: [
       { id: 'crop-recommendation', labelKey: 'nav.cropRecommendation', icon: Leaf },
       { id: 'disease-detection', labelKey: 'nav.diseaseDetection', icon: Bug },
@@ -44,7 +48,7 @@ const NAV_GROUPS: { groupTitle?: string; items: NavItem[] }[] = [
     ],
   },
   {
-    groupTitle: 'Mandi & Economics',
+    groupKey: 'groups.mandiEconomics',
     items: [
       { id: 'market-prices', labelKey: 'nav.marketPrices', icon: Store },
       { id: 'price-prediction', labelKey: 'nav.pricePrediction', icon: TrendingUp },
@@ -53,7 +57,7 @@ const NAV_GROUPS: { groupTitle?: string; items: NavItem[] }[] = [
     ],
   },
   {
-    groupTitle: 'Planning & Operations',
+    groupKey: 'groups.planningOperations',
     items: [
       { id: 'farm-calendar', labelKey: 'nav.farmCalendar', icon: Calendar },
       { id: 'farm-operations', labelKey: 'nav.farmOperations', icon: Tractor },
@@ -61,7 +65,7 @@ const NAV_GROUPS: { groupTitle?: string; items: NavItem[] }[] = [
     ],
   },
   {
-    groupTitle: 'Account & Storage',
+    groupKey: 'groups.accountStorage',
     items: [
       { id: 'farm-profile', labelKey: 'nav.farmProfile', icon: User },
       { id: 'google-drive', labelKey: 'nav.googleDrive', icon: HardDrive },
@@ -89,7 +93,7 @@ export const Sidebar: React.FC = () => {
               KRUSHIAI
             </h1>
             <p className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium leading-none mt-0.5">
-              From Soil to Market
+              {t('footer.tagline')}
             </p>
           </div>
         </div>
@@ -98,7 +102,7 @@ export const Sidebar: React.FC = () => {
         <div className="mt-3.5 flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50/80 dark:bg-emerald-950/40 rounded-lg border border-emerald-200/60 dark:border-emerald-800/40">
           <Cpu className="w-3 h-3 text-emerald-700 dark:text-emerald-400 shrink-0" />
           <span className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300">
-            Functional Prototype
+            {t('common.prototypeTag')}
           </span>
           <span className="text-[10px] text-emerald-600 dark:text-emerald-400 ml-auto font-mono">
             v1.2
@@ -110,9 +114,9 @@ export const Sidebar: React.FC = () => {
       <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
         {NAV_GROUPS.map((group, idx) => (
           <div key={idx} className="space-y-1">
-            {group.groupTitle && (
+            {group.groupKey && (
               <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 py-1">
-                {group.groupTitle}
+                {t(group.groupKey)}
               </div>
             )}
             {group.items.map((item) => {
@@ -145,7 +149,7 @@ export const Sidebar: React.FC = () => {
         >
           <span className="flex items-center gap-2">
             <Bell className="w-3.5 h-3.5 text-neutral-500" />
-            <span>Farm Notifications</span>
+            <span>{t('nav.notifications')}</span>
           </span>
           {unreadCount > 0 ? (
             <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white font-mono">

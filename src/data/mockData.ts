@@ -9,7 +9,7 @@ import {
 } from '../types';
 
 export const DEFAULT_FARMER_PROFILE: FarmerProfile = {
-  name: 'Ramesh Patil',
+  name: 'Abhijit Sable',
   phone: '+91 98230 45678',
   state: 'Maharashtra',
   district: 'Pune',

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Sprout, Heart, Shield, FileText, HelpCircle, Mail, MapPin } from 'lucide-react';
+import { Sprout, MapPin } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { SUPPORTED_LANGUAGES } from '../../locales';
 
 export const Footer: React.FC = () => {
   const { setActiveTab, setLanguage, language, t } = useApp();
@@ -20,63 +21,63 @@ export const Footer: React.FC = () => {
                   KRUSHIAI
                 </h3>
                 <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
-                  From Soil to Market
+                  {t('footer.tagline')}
                 </p>
               </div>
             </div>
             <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-sm">
-              AI-powered smart agriculture decision support system for Indian smallholders. Bringing soil chemistry, foliar vision diagnosis, APMC mandi forecasting, and smart irrigation into one unified ecosystem.
+              {t('footer.mission')}
             </p>
             <div className="flex items-center gap-2 text-xs text-neutral-500">
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Optimized for Indian Agro-Climatic Zones</span>
+              <span>{t('footer.indianZones')}</span>
             </div>
           </div>
 
           {/* Product Modules */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-neutral-200 mb-3">
-              Platform Modules
+              {t('footer.modulesTitle')}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <button
                   onClick={() => setActiveTab('crop-recommendation')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Crop Recommendation
+                  {t('nav.cropRecommendation')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('disease-detection')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Foliar Disease Detection
+                  {t('nav.diseaseDetection')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('market-prices')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  APMC Mandi Intelligence
+                  {t('nav.marketPrices')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('price-prediction')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  AI Price Forecasting
+                  {t('nav.pricePrediction')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('irrigation')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Smart Irrigation Advisory
+                  {t('nav.irrigation')}
                 </button>
               </li>
             </ul>
@@ -85,47 +86,47 @@ export const Footer: React.FC = () => {
           {/* Resources & Planning */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-neutral-200 mb-3">
-              Agronomic Resources
+              {t('footer.resourcesTitle')}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <button
                   onClick={() => setActiveTab('farm-calendar')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Crop Calendar
+                  {t('nav.farmCalendar')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('farm-operations')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Farm Operations & Labour
+                  {t('nav.farmOperations')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('crop-spacing')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Crop Spacing Guide
+                  {t('nav.cropSpacing')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('google-drive')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  Drive Farm Locker
+                  {t('nav.googleDrive')}
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  ML Architecture Roadmap
+                  {t('nav.settings')}
                 </button>
               </li>
             </ul>
@@ -134,27 +135,18 @@ export const Footer: React.FC = () => {
           {/* Regional Languages */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-neutral-200 mb-3">
-              Languages Supported
+              {t('landing.indianLanguages')} (13)
             </h4>
-            <div className="grid grid-cols-2 gap-1.5 text-xs">
-              {[
-                { code: 'en' as const, label: 'English' },
-                { code: 'hi' as const, label: 'हिन्दी' },
-                { code: 'mr' as const, label: 'मराठी' },
-                { code: 'bn' as const, label: 'বাংলা' },
-                { code: 'te' as const, label: 'తెలుగు' },
-                { code: 'ta' as const, label: 'தமிழ்' },
-                { code: 'gu' as const, label: 'ગુજરાતી' },
-                { code: 'kn' as const, label: 'ಕನ್ನಡ' },
-              ].map((l) => (
+            <div className="grid grid-cols-2 gap-1.5 text-xs max-h-48 overflow-y-auto pr-1">
+              {SUPPORTED_LANGUAGES.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => setLanguage(l.code)}
-                  className={`text-left py-1 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors ${
+                  className={`text-left py-1 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer truncate ${
                     language === l.code ? 'font-bold text-emerald-700 dark:text-emerald-400' : ''
                   }`}
                 >
-                  {l.label}
+                  {l.nativeName}
                 </button>
               ))}
             </div>
@@ -164,19 +156,17 @@ export const Footer: React.FC = () => {
         {/* Bottom Strip */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <p className="text-neutral-500">
-            © {new Date().getFullYear()} KrushiAI. AI-Powered Smart Agriculture Decision Support System.
+            © {new Date().getFullYear()} KrushiAI. {t('footer.tagline')}.
           </p>
 
           <div className="flex items-center gap-1.5 font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
-            <span>Built for Indian Agriculture 🇮🇳</span>
+            <span>🇮🇳 {t('footer.copyright')}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-neutral-500 text-[11px]">
-            <span>Privacy</span>
+          <div className="flex items-center gap-3 text-neutral-500 text-[11px]">
+            <span>{t('common.prototypeTag')}</span>
             <span>·</span>
-            <span>Terms of Use</span>
-            <span>·</span>
-            <span>KVK Advisory Protocols</span>
+            <span>{t('footer.prototypeNotice')}</span>
           </div>
         </div>
       </div>

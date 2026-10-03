@@ -21,12 +21,12 @@ import {
 } from 'recharts';
 import { ALL_CROPS } from '../../data/mockData';
 import { CropName, MarketComparisonResult } from '../../types';
-import { compareMarkets, MarketComparisonParams } from '../../services/marketComparisonService';
+import { compareMarkets } from '../../services/marketComparisonService';
 import { PrototypeBanner } from '../layout/PrototypeBanner';
 import { useApp } from '../../context/AppContext';
 
 export const MarketComparisonView: React.FC = () => {
-  const { farmerProfile, showToast } = useApp();
+  const { farmerProfile, showToast, t } = useApp();
 
   const [selectedCrop, setSelectedCrop] = useState<CropName>('Soybean');
   const [quantity, setQuantity] = useState<number>(45); // in quintals
@@ -50,7 +50,7 @@ export const MarketComparisonView: React.FC = () => {
       });
       setComparisonResults(res);
     } catch {
-      showToast('Error calculating market realization', 'warning');
+      showToast(t('common.error'), 'warning');
     } finally {
       setIsLoading(false);
     }
@@ -70,118 +70,94 @@ export const MarketComparisonView: React.FC = () => {
   }));
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-16">
+    <div className="space-y-6 max-w-5xl mx-auto pb-16 font-sans">
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <span className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+          <span className="p-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
             <Scale className="w-5 h-5" />
           </span>
           <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-neutral-100 tracking-tight">
-            Compare Markets (Net Realization Calculator)
+            {t('marketComparison.title')}
           </h2>
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Compute net take-home realization by factoring distance, logistics freight, and regional mandi prices.
+          {t('marketComparison.subtitle')}
         </p>
       </div>
 
-      <PrototypeBanner 
-        subtext="Prototype calculation — freight rates and mandi price spreads represent demonstration estimates. Local transport negotiation and quality grading differences will impact final realization."
-      />
+      <PrototypeBanner />
 
       {/* Input Parameters Box */}
-      <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-              Select Crop
+              {t('marketComparison.crop')}
             </label>
             <select
               value={selectedCrop}
               onChange={(e) => setSelectedCrop(e.target.value as CropName)}
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
             >
               {ALL_CROPS.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>{t(`crops.${c}`)}</option>
               ))}
             </select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-              Total Quantity (Quintals / 100kg bags)
+              {t('marketComparison.quantity')}
             </label>
             <input
               type="number"
               min="1"
               value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+              onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
             />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-              Farmer Origin Location
+              {t('marketComparison.farmerLocation')}
             </label>
             <input
               type="text"
               value={farmerLocation}
               onChange={(e) => setFarmerLocation(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
             />
           </div>
         </div>
       </div>
 
-      {/* Realization Bar Chart */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-          <div>
-            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-              Estimated Net Revenue Comparison
-            </h3>
-            <p className="text-xs text-neutral-500">
-              Formula: (Market Price × {quantity} Quintals) − Total Freight & APMC Logistics
-            </p>
-          </div>
-          <span className="text-xs text-emerald-800 dark:text-emerald-400 font-semibold self-start sm:self-auto">
-            Green Bar: Higher Estimated Net Realization
+      {/* Bar Chart Comparison */}
+      <div className="p-6 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+            {t('marketComparison.title')}
+          </h3>
+          <span className="text-xs text-neutral-500">
+            {quantity} {t('common.quintals')} {t(`crops.${selectedCrop}`)}
           </span>
         </div>
 
-        <div className="h-64 sm:h-72 w-full pt-2">
+        <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} opacity={0.6} />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 11, fill: '#6b7280' }} 
-                axisLine={{ stroke: '#e5e7eb' }}
-                tickLine={false}
-              />
-              <YAxis 
-                tick={{ fontSize: 11, fill: '#6b7280' }} 
-                axisLine={{ stroke: '#e5e7eb' }}
-                tickLine={false}
-                tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}k`}
-              />
+              <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(val) => `₹${val / 1000}k`} />
               <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                  borderRadius: '8px', 
-                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', 
-                  border: '1px solid #e5e7eb',
-                  fontSize: '12px' 
-                }}
-                formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Estimated Net Revenue']}
+                formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, t('marketComparison.netRevenueCol')]}
               />
               <Bar dataKey="netRevenue" radius={[6, 6, 0, 0]}>
                 {chartData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.isTop ? '#047857' : '#94a3b8'} 
+                    fill={entry.isTop ? '#059669' : '#9ca3af'} 
                   />
                 ))}
               </Bar>
@@ -190,73 +166,59 @@ export const MarketComparisonView: React.FC = () => {
         </div>
       </div>
 
-      {/* Comparison Detail Cards / Table */}
-      <div className="space-y-3">
-        <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-          Mandi Breakdown & Transport Math
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-          {comparisonResults.map((item) => (
-            <div
-              key={item.market}
-              className={`p-4 rounded-xl border transition-all ${
-                item.isHigherRealization
-                  ? 'border-emerald-600 bg-emerald-50/40 dark:bg-emerald-950/20 ring-1 ring-emerald-600'
-                  : 'border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
-                      {item.market}
-                    </h4>
-                    {item.isHigherRealization && (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-700 text-white">
-                        Higher Estimated Net Realization
+      {/* Comparison Table */}
+      <div className="rounded-3xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-xs overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-neutral-50 dark:bg-neutral-800/60 text-neutral-500 uppercase tracking-wider font-semibold border-b border-neutral-200 dark:border-neutral-800">
+              <tr>
+                <th className="p-4">{t('marketComparison.marketCol')}</th>
+                <th className="p-4">{t('marketPrices.districtCol')}</th>
+                <th className="p-4 text-right">{t('marketComparison.rateCol')}</th>
+                <th className="p-4 text-right">{t('marketComparison.distanceCol')}</th>
+                <th className="p-4 text-right">{t('marketComparison.freightCol')}</th>
+                <th className="p-4 text-right">{t('marketComparison.grossRevenueCol')}</th>
+                <th className="p-4 text-right font-bold text-neutral-900 dark:text-neutral-100">
+                  {t('marketComparison.netRevenueCol')}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+              {comparisonResults.map((res) => (
+                <tr 
+                  key={res.market}
+                  className={`transition-colors ${
+                    res.isHigherRealization 
+                      ? 'bg-emerald-50/60 dark:bg-emerald-950/30 font-semibold' 
+                      : 'hover:bg-neutral-50/70 dark:hover:bg-neutral-800/40'
+                  }`}
+                >
+                  <td className="p-4 flex items-center gap-2">
+                    <span className="text-neutral-900 dark:text-neutral-100">{res.market}</span>
+                    {res.isHigherRealization && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">
+                        {t('marketComparison.highestRealizationBadge')}
                       </span>
                     )}
-                  </div>
-                  <p className="text-xs text-neutral-500">
-                    District: {item.district} · Distance from origin: ~{item.distanceKm} km
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-800 text-xs">
-                <div>
-                  <span className="text-[10px] text-neutral-400 block">Mandi Rate</span>
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200 font-mono tabular-nums">
-                    ₹{item.marketPrice}/Qtl
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-neutral-400 block">Est. Freight/Qtl</span>
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200 font-mono tabular-nums">
-                    ₹{item.transportCostPerQuintal}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-neutral-400 block">Gross Revenue</span>
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200 font-mono tabular-nums">
-                    ₹{item.grossRevenue.toLocaleString('en-IN')}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-neutral-400 block">Est. Net Revenue</span>
-                  <span className="font-extrabold text-emerald-800 dark:text-emerald-300 font-mono tabular-nums">
-                    ₹{item.estimatedNetRevenue.toLocaleString('en-IN')}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+                  </td>
+                  <td className="p-4 text-neutral-500">{res.district}</td>
+                  <td className="p-4 text-right font-mono tabular-nums">₹{res.marketPrice}</td>
+                  <td className="p-4 text-right text-neutral-500">{res.distanceKm} {t('common.km')}</td>
+                  <td className="p-4 text-right text-neutral-500">₹{res.transportCostPerQuintal}</td>
+                  <td className="p-4 text-right font-mono tabular-nums">₹{res.grossRevenue.toLocaleString('en-IN')}</td>
+                  <td className={`p-4 text-right font-mono font-bold tabular-nums ${
+                    res.isHigherRealization ? 'text-emerald-700 dark:text-emerald-300 text-sm' : 'text-neutral-900 dark:text-neutral-100'
+                  }`}>
+                    ₹{res.estimatedNetRevenue.toLocaleString('en-IN')}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
-
-      <div className="p-3.5 rounded-xl bg-neutral-100 dark:bg-neutral-800/50 text-xs text-neutral-500 text-center">
-        “Note: Formulated as Higher Estimated Net Realization rather than absolute Best Market, as actual mandi commission charges, weighing cess, and daily truck availability fluctuate.”
+        <div className="p-4 bg-neutral-50/50 dark:bg-neutral-800/30 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-500">
+          {t('marketComparison.formulaNote')}
+        </div>
       </div>
     </div>
   );
