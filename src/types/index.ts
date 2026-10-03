@@ -1,4 +1,6 @@
-export type Language = 'en' | 'mr' | 'hi';
+import { SupportedLanguage } from '../locales';
+
+export type Language = SupportedLanguage;
 
 export type SoilType = 'Black Soil' | 'Red Soil' | 'Alluvial Soil' | 'Laterite Soil' | 'Other';
 
@@ -181,6 +183,7 @@ export interface DriveFileItem {
 }
 
 export type ActiveTab =
+  | 'landing'
   | 'dashboard'
   | 'crop-recommendation'
   | 'disease-detection'
@@ -191,6 +194,7 @@ export type ActiveTab =
   | 'irrigation'
   | 'farm-calendar'
   | 'farm-operations'
+  | 'crop-spacing'
   | 'farm-profile'
   | 'google-drive'
   | 'notifications'

@@ -39,69 +39,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Multilingual translations for key UI navigation and phrases
-const TRANSLATIONS: Record<Language, Record<string, string>> = {
-  en: {
-    'nav.dashboard': 'Dashboard',
-    'nav.cropRecommendation': 'Crop Recommendation',
-    'nav.diseaseDetection': 'Disease Detection',
-    'nav.marketPrices': 'Market Prices',
-    'nav.pricePrediction': 'Price Prediction',
-    'nav.marketComparison': 'Market Comparison',
-    'nav.yieldPrediction': 'Yield Prediction',
-    'nav.irrigation': 'Smart Irrigation',
-    'nav.farmCalendar': 'Farm Calendar',
-    'nav.farmOperations': 'Farm Operations',
-    'nav.farmProfile': 'Farm Profile',
-    'nav.googleDrive': 'Google Drive Records',
-    'nav.notifications': 'Notifications',
-    'nav.settings': 'Settings',
-    'app.tagline': 'AI-Powered Smart Agriculture Decision Support System',
-    'app.secondaryTagline': 'From Soil to Market — Intelligent Farming Assistance',
-    'proto.badge': 'Prototype / Demo Prediction',
-    'proto.banner': 'Demonstration Prototype — Machine learning models and live APMC feeds will be integrated in subsequent phases.',
-  },
-  mr: {
-    'nav.dashboard': 'डॅशबोर्ड',
-    'nav.cropRecommendation': 'पीक निवड',
-    'nav.diseaseDetection': 'रोग ओळख',
-    'nav.marketPrices': 'बाजारभाव',
-    'nav.pricePrediction': 'किंमत अंदाज',
-    'nav.marketComparison': 'बाजार तुलना',
-    'nav.yieldPrediction': 'उत्पादन अंदाज',
-    'nav.irrigation': 'सिंचन सल्ला',
-    'nav.farmCalendar': 'शेती दिनदर्शिका',
-    'nav.farmOperations': 'शेती मशागत व कामे',
-    'nav.farmProfile': 'शेतकरी प्रोफाईल',
-    'nav.googleDrive': 'गुगल ड्राईव्ह दस्तऐवज',
-    'nav.notifications': 'सूचना',
-    'nav.settings': 'सेटिंग्ज',
-    'app.tagline': 'स्मार्ट शेती निर्णय सहाय्य प्रणाली',
-    'app.secondaryTagline': 'मातीपासून बाजारापर्यंत — शेतीसाठी बुद्धिमान तंत्रज्ञान',
-    'proto.badge': 'प्रोटोटाइप / नमुना अंदाज',
-    'proto.banner': 'डेमो प्रोटोटाइप — भविष्यात प्रत्यक्ष मशीन लर्निंग मॉडेल्स आणि थेट बाजारभाव जोडले जातील.',
-  },
-  hi: {
-    'nav.dashboard': 'डैशबोर्ड',
-    'nav.cropRecommendation': 'फसल चयन',
-    'nav.diseaseDetection': 'रोग पहचान',
-    'nav.marketPrices': 'मंडी भाव',
-    'nav.pricePrediction': 'मूल्य पूर्वानुमान',
-    'nav.marketComparison': 'मंडी तुलना',
-    'nav.yieldPrediction': 'उपज अनुमान',
-    'nav.irrigation': 'स्मार्ट सिंचाई',
-    'nav.farmCalendar': 'कृषि कैलेंडर',
-    'nav.farmOperations': 'कृषि कार्य व प्रबंधन',
-    'nav.farmProfile': 'किसान प्रोफाइल',
-    'nav.googleDrive': 'गूगल ड्राइव अभिलेख',
-    'nav.notifications': 'सूचनाएं',
-    'nav.settings': 'सेटिंग्स',
-    'app.tagline': 'एआई-संचालित स्मार्ट कृषि निर्णय समर्थन प्रणाली',
-    'app.secondaryTagline': 'मिट्टी से मंडी तक — किसानों के लिए बुद्धिमान सहायता',
-    'proto.badge': 'प्रोटोटाइप / डेमो पूर्वानुमान',
-    'proto.banner': 'डेमो प्रोटोटाइप — वास्तविक एमएल मॉडल और सरकारी मंडी एपीआई बाद में जोड़े जाएंगे।',
-  },
-};
+import { TRANSLATIONS, SupportedLanguage, SUPPORTED_LANGUAGES } from '../locales';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
@@ -209,8 +147,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
+    const meta = SUPPORTED_LANGUAGES.find((l) => l.code === lang);
     showToast(
-      lang === 'mr' ? 'भाषा मराठी निवडली' : lang === 'hi' ? 'भाषा हिंदी चुनी गई' : 'Language set to English',
+      meta ? `Language switched to ${meta.name} (${meta.nativeName})` : 'Language updated',
       'info'
     );
   };
@@ -247,7 +186,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const t = (key: string): string => {
-    return TRANSLATIONS[language]?.[key] || TRANSLATIONS.en[key] || key;
+    return (TRANSLATIONS[language] as any)?.[key] || (TRANSLATIONS.en as any)?.[key] || key;
   };
 
   return (

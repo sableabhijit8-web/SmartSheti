@@ -5,6 +5,7 @@ import { TopBar } from './components/layout/TopBar';
 import { MobileNav } from './components/layout/MobileNav';
 import { NotificationsDrawer } from './components/notifications/NotificationsDrawer';
 
+import { LandingPageView } from './components/landing/LandingPageView';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { CropRecommendationView } from './components/crops/CropRecommendationView';
 import { DiseaseDetectionView } from './components/disease/DiseaseDetectionView';
@@ -15,6 +16,7 @@ import { YieldPredictionView } from './components/yield/YieldPredictionView';
 import { IrrigationView } from './components/irrigation/IrrigationView';
 import { FarmCalendarView } from './components/calendar/FarmCalendarView';
 import { FarmOperationsView } from './components/operations/FarmOperationsView';
+import { CropSpacingView } from './components/operations/CropSpacingView';
 import { FarmProfileView } from './components/profile/FarmProfileView';
 import { GoogleDriveView } from './components/drive/GoogleDriveView';
 import { SettingsView } from './components/settings/SettingsView';
@@ -25,6 +27,8 @@ const MainLayout: React.FC = () => {
 
   const renderActiveView = () => {
     switch (activeTab) {
+      case 'landing':
+        return <LandingPageView />;
       case 'dashboard':
         return <DashboardView />;
       case 'crop-recommendation':
@@ -45,6 +49,8 @@ const MainLayout: React.FC = () => {
         return <FarmCalendarView />;
       case 'farm-operations':
         return <FarmOperationsView />;
+      case 'crop-spacing':
+        return <CropSpacingView />;
       case 'farm-profile':
         return <FarmProfileView />;
       case 'google-drive':
